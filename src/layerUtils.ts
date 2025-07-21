@@ -186,7 +186,8 @@ const kmlLayerFromJson = async (json: KmlLayerJson) => {
 
 const groupLayerFromJson = async (json: GroupLayerJson) => {
   const layers: Array<Layer> = [];
-  for (const layerJson of json.layers) {
+  for (const layerJsonId in json.layers) {
+    const layerJson = json.layers[layerJsonId];
     const layer = await layerFromJson(layerJson);
     if (!layer) continue;
     layers.push(layer);

@@ -6,13 +6,15 @@ import "ol-layerswitcher/dist/ol-layerswitcher.css";
 import Map from "ol/map";
 import View from "ol/view";
 import { useGeographic } from "ol/proj.js";
-import config from "./config.json";
 import { layerFromJson } from "./layerUtils";
 import LayerSwitcher from "ol-layerswitcher";
 import { loadEpsgs } from "./epsgUtils";
+import { getConfig } from "./configProvider";
 
 const initMap = () => {
   useGeographic();
+
+  const config = getConfig();
 
   const position = [51.505, -0.09];
   const map = new Map({
@@ -25,7 +27,8 @@ const initMap = () => {
 
   loadEpsgs(config.epsgs);
 
-  for (const layerJson of config.layers) {
+  for (const layerJsonId in config.layers) {
+    const layerJson = config.layers[layerJsonId];
     layerFromJson(layerJson).then((layer) => {
       if (layer) {
         map.addLayer(layer);
