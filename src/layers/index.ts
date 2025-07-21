@@ -9,9 +9,11 @@ import { wmtsLayerFromJson, type WmtsLayerJson } from "./wmts";
 import { groupLayerFromJson, type GroupLayerJson } from "./group";
 import { wfsLayerFromJson, type WfsLayerJson } from "./wfs";
 import { gpsLayerFromJson, type GpsLayerJson } from "./gps";
+import { geoJsonLayerFromJson, type GeoJsonLayerJson } from "./geojson";
 
 export type LayerJson =
   | KmlLayerJson
+  | GeoJsonLayerJson
   | XyzLayerJson
   | WmsLayerJson
   | WmtsLayerJson
@@ -37,6 +39,9 @@ export const layerFromJson = async (json: any) => {
   }
   if (json.type === "kml") {
     return kmlLayerFromJson(json as KmlLayerJson);
+  }
+  if (json.type === "geojson") {
+    return geoJsonLayerFromJson(json as GeoJsonLayerJson);
   }
   if (json.type === "group") {
     return groupLayerFromJson(json as GroupLayerJson);
