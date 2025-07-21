@@ -4,7 +4,6 @@ import { wmsLayerFromJson, type WmsLayerJson } from "./wms";
 import { wmtsLayerFromJson, type WmtsLayerJson } from "./wmts";
 import { groupLayerFromJson, type GroupLayerJson } from "./group";
 import { wfsLayerFromJson, type WfsLayerJson } from "./wfs";
-import { gpsLayerFromJson, type GpsLayerJson } from "./gps";
 import { geoJsonLayerFromJson, type GeoJsonLayerJson } from "./geojson";
 import { wmsTilesLayerFromJson } from "./wms-tiles";
 
@@ -26,7 +25,6 @@ export type LayerJson =
   | XyzLayerJson
   | WmsLayerJson
   | WmtsLayerJson
-  | GpsLayerJson
   | GroupLayerJson
   | WfsLayerJson;
 
@@ -54,9 +52,6 @@ export const layerFromJson = async (json: any, layerUid: string) => {
   }
   if (json.type === "group") {
     return groupLayerFromJson(json as GroupLayerJson, layerUid);
-  }
-  if (json.type === "gps") {
-    return gpsLayerFromJson(json as GpsLayerJson);
   }
   console.error("Unknown layer type: " + json.type, json);
   return null;

@@ -13,6 +13,7 @@ import { store } from "./state";
 import { layerAdded } from "./state/layerConfig";
 import { v4 as uuidv4 } from 'uuid';
 import { layerAssigned } from "./state/mapLayers";
+import { PositionControl } from "./controls/position-control/PositionControl";
 
 
 const initMap = () => {
@@ -50,6 +51,8 @@ const initMap = () => {
   }
 
   registerLayerMenu(map)
+
+  map.addControl(new PositionControl());
 };
 
 initMap();

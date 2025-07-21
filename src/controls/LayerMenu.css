@@ -35,10 +35,11 @@
   margin: 0;
   width: 100vw;
   height: 100vh;
+  overflow-y: auto;
 }
 
 .layer-menu .hide-btn {
-  position: absolute;
+  position: fixed;
   top: 10px;
   right: 10px;
   width: 44px;

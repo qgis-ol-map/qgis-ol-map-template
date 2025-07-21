@@ -1,0 +1,24 @@
+.position-button {
+  width: 44px;
+  height: 44px;
+  position: absolute;
+  padding: 0;
+  margin: 0;
+  top: 68px;
+  right: 10px;
+  border-radius: 10px;
+  border: 2px solid black;
+  background-color: white;
+  text-align: center;
+  line-height: 58px;
+}
+
+.position-button.off svg {
+  color: gray;
+}
+.position-button.position svg {
+  color: #3399cc;
+}
+.position-button.heading svg {
+  color: #3399cc;
+}
