@@ -3,10 +3,12 @@
 ## Running locally
 
 ```bash
-npm run vite
+npm install
+npm run dev
 ```
 
 ### Building production version
 ```
+npm install
 npm run build
 ```
