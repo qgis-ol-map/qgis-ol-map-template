@@ -15,6 +15,7 @@ import { v4 as uuidv4 } from "uuid";
 import { layerAssigned } from "./state/mapLayers";
 import { PositionControl } from "./controls/position-control/PositionControl";
 import ScaleLine from "ol/control/ScaleLine.js";
+import Zoom from "ol/control/Zoom.js";
 
 const initMap = () => {
   useGeographic();
@@ -24,6 +25,7 @@ const initMap = () => {
   const position = [51.505, -0.09];
   const map = new Map({
     target: "map",
+    controls: [],
     view: new View({
       center: position,
       zoom: 2,
@@ -52,15 +54,18 @@ const initMap = () => {
     });
   }
 
+  map.addControl(new Zoom());
   map.addControl(new PositionControl());
   map.addControl(new LayerMenuControl());
 
-  map.addControl(new ScaleLine({
-    units: "metric",
-    bar: true,
-    steps: 4,
-    minWidth: 140,
-  }));
+  map.addControl(
+    new ScaleLine({
+      units: "metric",
+      bar: true,
+      steps: 4,
+      minWidth: 140,
+    })
+  );
 };
 
 initMap();

@@ -49,6 +49,8 @@ const isSafari: boolean = (() => {
   }
 })();
 
+const orientationSupported = "onorientationchange" in window;
+
 export class PositionControl extends Control {
   state: State = "off";
   layer: Layer;
@@ -124,8 +126,13 @@ export class PositionControl extends Control {
       this.state = "position";
       this.startPosition();
     } else if (this.state == "position") {
-      this.state = "heading";
-      this.startHeading();
+      if (orientationSupported) {
+        this.state = "heading";
+        this.startHeading();
+      } else {
+        this.state = "off";
+        this.stopPosition();
+      }
     } else if (this.state == "heading") {
       this.state = "off";
       this.stopHeading();
