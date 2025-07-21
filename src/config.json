@@ -4,6 +4,15 @@
   },
   "layers": [
     {
+      "type": "wfs",
+      "title": "Caves",
+      "zIndex": 400,
+      "url": "https://cbdgmapa.pgi.gov.pl/arcgis/services/jaskinie/MapServer/WFSServer",
+      "layer": "jaskinie:Jaskinie",
+      "version": "1.1.0",
+      "crs": "EPSG:4326"
+    },
+    {
       "type": "kml",
       "title": "KML Sample",
       "zIndex": 300,

@@ -9,6 +9,7 @@ import VectorSource from "ol/source/Vector";
 import KML from "ol/format/KML.js";
 import LayerGroup from "ol/layer/Group";
 import type Layer from "ol/layer/Layer";
+import WFS from "ol/format/WFS.js";
 
 type KmlLayerJson = {
   type: string;
@@ -56,6 +57,17 @@ type GroupLayerJson = {
   layers: Array<KmlLayerJson | XyzLayerJson | WmsLayerJson | WmtsLayerJson>;
 };
 
+type WfsLayerJson = {
+  type: string;
+  title?: string;
+  zIndex: number;
+  opacity?: number;
+  url: string;
+  layer: string;
+  version?: string;
+  crs?: string;
+};
+
 export const layerFromJson = async (json: any) => {
   if (json.type === "xyz") {
     return xyzLayerFromJson(json as XyzLayerJson);
@@ -68,6 +80,9 @@ export const layerFromJson = async (json: any) => {
   }
   if (json.type === "wmts") {
     return wmtsLayerFromJson(json as WmtsLayerJson);
+  }
+  if (json.type === "wfs") {
+    return wfsLayerFromJson(json as WfsLayerJson);
   }
   if (json.type === "kml") {
     return kmlLayerFromJson(json as KmlLayerJson);
@@ -183,4 +198,20 @@ const groupLayerFromJson = async (json: GroupLayerJson) => {
     layers,
   });
   return group;
+};
+
+const wfsLayerFromJson = async (json: WfsLayerJson) => {
+  const source = new VectorSource({
+    format: new WFS({ version: "1.1.0" }),
+    url:
+      json.url +
+      `?SERVICE=WFS&REQUEST=GetFeature&TYPENAMES=${json.layer}&VERSION=${json.version}&srsname=${json.crs}`,
+  });
+
+  return new VectorLayer({
+    title: json.title ?? "Untitled WFS layer",
+    opacity: json.opacity ?? 1.0,
+    zIndex: json.zIndex ?? null,
+    source,
+  });
 };
