@@ -10,6 +10,13 @@ import KML from "ol/format/KML.js";
 import LayerGroup from "ol/layer/Group";
 import type Layer from "ol/layer/Layer";
 import WFS from "ol/format/WFS.js";
+import Feature from "ol/Feature.js";
+import Geolocation from "ol/Geolocation.js";
+import CircleStyle from "ol/style/Circle.js";
+import Fill from "ol/style/Fill.js";
+import Stroke from "ol/style/Stroke.js";
+import Style from "ol/style/Style.js";
+import Point from 'ol/geom/Point.js';
 
 type KmlLayerJson = {
   type: string;
@@ -68,6 +75,13 @@ type WfsLayerJson = {
   crs?: string;
 };
 
+type GpsLayerJson = {
+  type: string;
+  title?: string;
+  zIndex: number;
+  opacity?: number;
+};
+
 export const layerFromJson = async (json: any) => {
   if (json.type === "xyz") {
     return xyzLayerFromJson(json as XyzLayerJson);
@@ -90,7 +104,10 @@ export const layerFromJson = async (json: any) => {
   if (json.type === "group") {
     return groupLayerFromJson(json as GroupLayerJson);
   }
-  console.error("Unknown layer type");
+  if (json.type === "gps") {
+    return gpsLayerFromJson(json as GpsLayerJson);
+  }
+  console.error("Unknown layer type: " + json.type, json);
   return null;
 };
 
@@ -215,4 +232,57 @@ const wfsLayerFromJson = async (json: WfsLayerJson) => {
     zIndex: json.zIndex ?? null,
     source,
   });
+};
+
+const gpsLayerFromJson = async (json: GpsLayerJson) => {
+  const geolocation = new Geolocation({
+    // enableHighAccuracy must be set to true to have the heading value.
+    trackingOptions: {
+      enableHighAccuracy: true,
+    },
+  });
+
+  const accuracyFeature = new Feature();
+  geolocation.on("change:accuracyGeometry", function () {
+    const geometry = geolocation.getAccuracyGeometry();
+    if (!geometry) return;
+    accuracyFeature.setGeometry(geometry);
+  });
+
+  const positionFeature = new Feature();
+  positionFeature.setStyle(
+    new Style({
+      image: new CircleStyle({
+        radius: 6,
+        fill: new Fill({
+          color: "#3399CC",
+        }),
+        stroke: new Stroke({
+          color: "#fff",
+          width: 2,
+        }),
+      }),
+    })
+  );
+
+  geolocation.on("change:position", function () {
+    const coordinates = geolocation.getPosition();
+    if (!coordinates) return;
+    positionFeature.setGeometry(new Point(coordinates));
+  });
+
+  const source = new VectorSource({
+    features: [accuracyFeature, positionFeature],
+  });
+
+  const layer = new VectorLayer({
+    title: json.title ?? "Untitled GPS layer",
+    opacity: json.opacity ?? 1.0,
+    zIndex: json.zIndex ?? null,
+    source,
+  });
+
+  geolocation.setTracking(true);
+
+  return layer;
 };

@@ -1,11 +1,10 @@
 export default {
     layers: {
-        group: {
-            layers: {
-                hillshade: {
-                    opacity: 0.1
-                }
-            }
+        gps: {
+            type: "gps",
+            title: "Current position",
+            visible: true,
+            zIndex: 9990,
         }
     }
 };
