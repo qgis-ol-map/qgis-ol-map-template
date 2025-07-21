@@ -3,8 +3,8 @@ import "./style.css";
 import "ol/ol.css";
 import "ol-layerswitcher/dist/ol-layerswitcher.css";
 
-import Map from "ol/map";
-import View from "ol/view";
+import Map from "ol/Map";
+import View from "ol/View";
 import { useGeographic } from "ol/proj.js";
 import { layerFromJson } from "./layerUtils";
 import LayerSwitcher from "ol-layerswitcher";

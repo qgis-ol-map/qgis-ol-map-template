@@ -1,5 +1,5 @@
 import ImageTileSource from "ol/source/ImageTile.js";
-import TileLayer from "ol/layer/tile";
+import TileLayer from "ol/layer/Tile";
 import WMTS, { optionsFromCapabilities } from "ol/source/WMTS.js";
 import ImageLayer from "ol/layer/Image";
 import { ImageWMS, TileWMS } from "ol/source";
