@@ -11,10 +11,10 @@ import { getConfig } from "./configProvider";
 import { register as registerLayerMenu } from "./controls/LayerMenu";
 import { store } from "./state";
 import { layerAdded } from "./state/layerConfig";
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
 import { layerAssigned } from "./state/mapLayers";
 import { PositionControl } from "./controls/position-control/PositionControl";
-
+import ScaleLine from "ol/control/ScaleLine.js";
 
 const initMap = () => {
   useGeographic();
@@ -36,23 +36,32 @@ const initMap = () => {
     const layerJson = config.layers[layerJsonId];
 
     const layerUid = uuidv4();
-    store.dispatch(layerAdded({
-      uid: layerUid,
-      parent: null,
-      json: layerJson,
-    }));
+    store.dispatch(
+      layerAdded({
+        uid: layerUid,
+        parent: null,
+        json: layerJson,
+      })
+    );
 
     layerFromJson(layerJson, layerUid).then((layer) => {
       if (layer) {
         map.addLayer(layer);
-        store.dispatch(layerAssigned({uid: layerUid, layer}));
+        store.dispatch(layerAssigned({ uid: layerUid, layer }));
       }
     });
   }
 
-  registerLayerMenu(map)
+  registerLayerMenu(map);
 
   map.addControl(new PositionControl());
+
+  map.addControl(new ScaleLine({
+    units: "metric",
+    bar: true,
+    steps: 4,
+    minWidth: 140,
+  }));
 };
 
 initMap();
