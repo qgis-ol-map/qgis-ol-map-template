@@ -1,15 +1,14 @@
-import ImageTileSource from "ol/source/ImageTile.js";
 import TileLayer from "ol/layer/Tile";
-import type { CommonLayerJson } from ".";
+import { TileWMS } from "ol/source";
+import type { WmsLayerJson } from "./wms";
 
-export type XyzLayerJson = CommonLayerJson & {
-  url: string;
-};
-
-export const xyzLayerFromJson = async (json: XyzLayerJson) => {
-  const source = new ImageTileSource({
+export const wmsTilesLayerFromJson = async (json: WmsLayerJson) => {
+  const source = new TileWMS({
     url: json.url,
     attributions: json.attribution,
+    params: { LAYERS: json.layer },
+    serverType: "geoserver",
+    transition: 0,
     ...json.sourceParams,
   });
 

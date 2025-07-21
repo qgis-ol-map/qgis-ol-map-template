@@ -11,12 +11,15 @@ export const geoJsonLayerFromJson = async (json: GeoJsonLayerJson) => {
   const source = new VectorSource({
     url: json.url,
     format: new GeoJSON(),
-    attributions: json.attribution ?? "",
+    attributions: json.attribution,
+    ...json.sourceParams,
   });
+
   return new VectorLayer({
     opacity: json.opacity ?? 1.0,
     zIndex: json.zIndex ?? null,
     visible: json.visible ?? true,
     source,
+    ...json.layerParams,
   });
 };

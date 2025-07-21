@@ -11,12 +11,15 @@ export const kmlLayerFromJson = async (json: KmlLayerJson) => {
   const source = new VectorSource({
     url: json.url,
     format: new KML(),
-    attributions: json.attribution ?? "",
+    attributions: json.attribution,
+    ...json.sourceParams,
   });
+
   return new VectorLayer({
     opacity: json.opacity ?? 1.0,
     zIndex: json.zIndex ?? null,
     visible: json.visible ?? true,
     source,
+    ...json.layerParams,
   });
 };

@@ -14,6 +14,7 @@ export const groupLayerFromJson = async (json: GroupLayerJson, layerUid: string)
     opacity: json.opacity ?? 1.0,
     zIndex: json.zIndex ?? null,
     visible: json.visible ?? true,
+    ...json.layerParams,
   });
 
   for (const layerJsonId in json.layers) {

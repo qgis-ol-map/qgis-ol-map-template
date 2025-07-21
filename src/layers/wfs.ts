@@ -13,9 +13,11 @@ export type WfsLayerJson = CommonLayerJson & {
 export const wfsLayerFromJson = async (json: WfsLayerJson) => {
   const source = new VectorSource({
     format: new WFS({ version: "1.1.0" }),
+    attributions: json.attribution,
     url:
       json.url +
       `?SERVICE=WFS&REQUEST=GetFeature&TYPENAMES=${json.layer}&VERSION=${json.version}&srsname=${json.crs}`,
+    ...json.sourceParams,
   });
 
   return new VectorLayer({
@@ -23,5 +25,6 @@ export const wfsLayerFromJson = async (json: WfsLayerJson) => {
     zIndex: json.zIndex ?? null,
     visible: json.visible ?? true,
     source,
+    ...json.layerParams,
   });
 };

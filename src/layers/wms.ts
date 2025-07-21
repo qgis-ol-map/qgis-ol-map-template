@@ -1,6 +1,5 @@
 import ImageLayer from "ol/layer/Image";
-import TileLayer from "ol/layer/Tile";
-import { ImageWMS, TileWMS } from "ol/source";
+import { ImageWMS } from "ol/source";
 import type { CommonLayerJson } from ".";
 
 export type WmsLayerJson = CommonLayerJson & {
@@ -11,10 +10,11 @@ export type WmsLayerJson = CommonLayerJson & {
 export const wmsLayerFromJson = async (json: WmsLayerJson) => {
   const source = new ImageWMS({
     url: json.url,
-    attributions: json.attribution ?? "",
+    attributions: json.attribution,
     params: { LAYERS: json.layer },
     ratio: 1,
     serverType: "geoserver",
+    ...json.sourceParams,
   });
 
   return new ImageLayer({
@@ -22,23 +22,6 @@ export const wmsLayerFromJson = async (json: WmsLayerJson) => {
     zIndex: json.zIndex ?? null,
     visible: json.visible ?? true,
     source,
-  });
-};
-
-
-export const wmsTilesLayerFromJson = async (json: WmsLayerJson) => {
-  const source = new TileWMS({
-    url: json.url,
-    attributions: json.attribution ?? "",
-    params: { LAYERS: json.layer },
-    serverType: "geoserver",
-    transition: 0,
-  });
-
-  return new TileLayer({
-    opacity: json.opacity ?? 1.0,
-    zIndex: json.zIndex ?? null,
-    visible: json.visible ?? true,
-    source,
+    ...json.layerParams,
   });
 };

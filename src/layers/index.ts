@@ -1,15 +1,12 @@
 import { kmlLayerFromJson, type KmlLayerJson } from "./kml";
 import { xyzLayerFromJson, type XyzLayerJson } from "./xyz";
-import {
-  wmsLayerFromJson,
-  wmsTilesLayerFromJson,
-  type WmsLayerJson,
-} from "./wms";
+import { wmsLayerFromJson, type WmsLayerJson } from "./wms";
 import { wmtsLayerFromJson, type WmtsLayerJson } from "./wmts";
 import { groupLayerFromJson, type GroupLayerJson } from "./group";
 import { wfsLayerFromJson, type WfsLayerJson } from "./wfs";
 import { gpsLayerFromJson, type GpsLayerJson } from "./gps";
 import { geoJsonLayerFromJson, type GeoJsonLayerJson } from "./geojson";
+import { wmsTilesLayerFromJson } from "./wms-tiles";
 
 export type CommonLayerJson = {
   type: string;
@@ -19,6 +16,8 @@ export type CommonLayerJson = {
   zIndex: number;
   opacity?: number;
   attribution?: string;
+  sourceParams?: Record<string, any>;
+  layerParams?: Record<string, any>;
 };
 
 export type LayerJson =

@@ -51,6 +51,8 @@ export const gpsLayerFromJson = async (json: GpsLayerJson) => {
 
   const source = new VectorSource({
     features: [accuracyFeature, positionFeature],
+    attributions: json.attribution,
+    ...json.sourceParams,
   });
 
   const layer = new VectorLayer({
@@ -58,6 +60,7 @@ export const gpsLayerFromJson = async (json: GpsLayerJson) => {
     zIndex: json.zIndex ?? null,
     visible: json.visible ?? true,
     source,
+    ...json.layerParams,
   });
 
   geolocation.setTracking(true);

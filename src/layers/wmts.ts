@@ -18,7 +18,8 @@ export const wmtsLayerFromJson = async (json: WmtsLayerJson) => {
   const capabilities = parser.read(capabilitiesText);
   const options = optionsFromCapabilities(capabilities, {
     layer: json.layer,
-    attributions: json.attribution ?? "",
+    attributions: json.attribution,
+    ...json.sourceParams,
   });
 
   if (!options) {
@@ -33,5 +34,6 @@ export const wmtsLayerFromJson = async (json: WmtsLayerJson) => {
     zIndex: json.zIndex ?? null,
     visible: json.visible ?? true,
     source,
+    ...json.layerParams,
   });
 };
