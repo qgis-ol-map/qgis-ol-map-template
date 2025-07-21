@@ -6,7 +6,7 @@ import "ol-layerswitcher/dist/ol-layerswitcher.css";
 import Map from "ol/Map";
 import View from "ol/View";
 import { useGeographic } from "ol/proj.js";
-import { layerFromJson } from "./layerUtils";
+import { layerFromJson } from "./layers";
 import LayerSwitcher from "ol-layerswitcher";
 import { loadEpsgs } from "./epsgUtils";
 import { getConfig } from "./configProvider";
