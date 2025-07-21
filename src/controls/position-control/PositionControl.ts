@@ -18,8 +18,6 @@ import iconPosition from "./assets/current-location.svg?raw";
 import iconHeading from "./assets/brand-safari.svg?raw";
 import type { Coordinate } from "ol/coordinate";
 
-interface Options extends ControlOptions {}
-
 type State = "off" | "position" | "heading";
 
 type DeviceOrientationPermission = "granted" | "denied" | "default";
@@ -29,6 +27,11 @@ type OrientationState = {
   accuracy: number;
   absolute: boolean;
 };
+
+const POSITION_AUTO_ZOOM = 19;
+const POSITION_THROTTLE_MS = 500;
+const HEADING_THROTTLE_MS = 50;
+const DEFAULT_MAP_ROTATION = 0;
 
 const isSafari: boolean = (() => {
   try {
@@ -49,9 +52,12 @@ const isSafari: boolean = (() => {
 export class PositionControl extends Control {
   state: State = "off";
   layer: Layer;
-  source: VectorSource;
   geolocation: Geolocation;
 
+  positionFeature: Feature;
+  accuracyFeature: Feature;
+
+  zoomOnNextPosition: boolean = false;
   lastPosition?: Coordinate;
   lastHeading?: number;
 
@@ -60,7 +66,7 @@ export class PositionControl extends Control {
 
   boundOrientationEventListener: (e: DeviceOrientationEvent) => void;
 
-  constructor(opt_options?: Options) {
+  constructor(opt_options?: ControlOptions) {
     const options = Object.assign({}, opt_options);
 
     const element = document.createElement("div");
@@ -71,18 +77,12 @@ export class PositionControl extends Control {
     this.element.onclick = () => this.toggleState();
 
     const geolocation = new Geolocation({
-      // enableHighAccuracy must be set to true to have the heading value.
       trackingOptions: {
         enableHighAccuracy: true,
       },
     });
 
     const accuracyFeature = new Feature();
-    geolocation.on("change:accuracyGeometry", () => {
-      const geometry = geolocation.getAccuracyGeometry();
-      accuracyFeature.setGeometry(geometry ?? undefined);
-    });
-
     const positionFeature = new Feature();
     positionFeature.setStyle(
       new Style({
@@ -99,31 +99,21 @@ export class PositionControl extends Control {
       })
     );
 
-    geolocation.on("change:position", () => {
-      const coordinates = geolocation.getPosition();
-
-      if (this.lastPosition == coordinates) return;
-      if (this.positionThrottleLock) return;
-
-      this.lastPosition = coordinates;
-      this.positionThrottleLock = true;
-      setTimeout(() => (this.positionThrottleLock = false), 500);
-
-      positionFeature.setGeometry(
-        coordinates ? new Point(coordinates) : undefined
-      );
-    });
+    geolocation.on("change:accuracyGeometry", () => this.accuracyUpdate());
+    geolocation.on("change:position", () => this.positionUpdate());
 
     const source = new VectorSource({
       features: [accuracyFeature, positionFeature],
     });
 
-    this.geolocation = geolocation;
     this.layer = new VectorLayer({
       source,
-      zIndex: 9999,
+      zIndex: 99999,
     });
-    this.source = source;
+
+    this.geolocation = geolocation;
+    this.positionFeature = positionFeature;
+    this.accuracyFeature = accuracyFeature;
 
     this.boundOrientationEventListener =
       this.orientationEventListener.bind(this);
@@ -153,6 +143,7 @@ export class PositionControl extends Control {
 
   startPosition() {
     this.getMap()?.addLayer(this.layer);
+    this.zoomOnNextPosition = true;
     this.geolocation.setTracking(true);
   }
 
@@ -164,29 +155,52 @@ export class PositionControl extends Control {
   stopPosition() {
     this.geolocation.setTracking(false);
     this.getMap()?.removeLayer(this.layer);
+    this.positionFeature.setGeometry(undefined);
+    this.accuracyFeature.setGeometry(undefined);
   }
 
   stopHeading() {
     this.unregisterOrientationEventListener();
-    this.orientationUpdate(null, true);
+    this.getMap()?.getView().setRotation(DEFAULT_MAP_ROTATION);
   }
 
-  orientationUpdate(
-    orientation: OrientationState | null,
-    force: boolean = false
-  ) {
-    const heading = orientation?.degree;
-    if (!force) {
-      if (this.lastHeading == heading) return;
-      if (this.headingThrottleLock) return;
+  positionUpdate() {
+    const coordinates = this.geolocation.getPosition();
+
+    if (this.lastPosition == coordinates) return;
+    if (this.positionThrottleLock) return;
+
+    if (this.zoomOnNextPosition) {
+      this.zoomOnNextPosition = false;
+      this.getMap()?.getView().setCenter(coordinates);
+      this.getMap()?.getView().setZoom(POSITION_AUTO_ZOOM);
     }
+
+    this.lastPosition = coordinates;
+    this.positionThrottleLock = true;
+    setTimeout(() => (this.positionThrottleLock = false), POSITION_THROTTLE_MS);
+
+    this.positionFeature.setGeometry(
+      coordinates ? new Point(coordinates) : undefined
+    );
+  }
+
+  accuracyUpdate() {
+    const geometry = this.geolocation.getAccuracyGeometry();
+    this.accuracyFeature.setGeometry(geometry ?? undefined);
+  }
+
+  orientationUpdate(orientation: OrientationState | null) {
+    const heading = orientation?.degree;
+    if (this.lastHeading == heading) return;
+    if (this.headingThrottleLock) return;
 
     this.lastHeading = heading;
     this.headingThrottleLock = true;
-    setTimeout(() => (this.headingThrottleLock = false), 100);
+    setTimeout(() => (this.headingThrottleLock = false), HEADING_THROTTLE_MS);
 
     if (!heading) {
-      this.getMap()?.getView().setRotation(0);
+      this.getMap()?.getView().setRotation(DEFAULT_MAP_ROTATION);
       return;
     }
 

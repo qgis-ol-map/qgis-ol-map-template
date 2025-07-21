@@ -1,17 +1,17 @@
 import "./LayerMenu.css";
 
 import Control from "ol/control/Control";
+import { type Options as ControlOptions } from "ol/control/Control";
 import { createRoot } from "react-dom/client";
-import Map from "ol/Map";
-import { store, useSelector, useDispatch } from "../state";
-import { layersByParent, type LayerConfig } from "../state/layerConfig";
+import { store, useSelector, useDispatch } from "../../state";
+import { layersByParent, type LayerConfig } from "../../state/layerConfig";
 import { Provider } from "react-redux";
 import { useState, type ChangeEvent } from "react";
-import { layerByUid } from "../state/mapLayers";
+import { layerByUid } from "../../state/mapLayers";
 import {
   layerConfiguredVisibility,
   manualConfigByLayer,
-} from "../state/manualConfig";
+} from "../../state/manualConfig";
 
 type LayerItemProps = {
   layer: LayerConfig;
@@ -93,7 +93,7 @@ const LayerList = () => {
   );
 };
 
-export const LayerMenu = () => {
+const LayerMenu = () => {
   const [show, setShow] = useState(false);
 
   return (
@@ -115,12 +115,17 @@ export const LayerMenu = () => {
   );
 };
 
-export const register = (map: Map) => {
-  const div = document.createElement("div");
-  const root = createRoot(div);
-  root.render(<LayerMenu />);
-  const control = new Control({
-    element: div,
-  });
-  map.addControl(control);
-};
+
+export class LayerMenuControl extends Control {
+  constructor(opt_options?: ControlOptions) {
+    const options = Object.assign({}, opt_options);
+
+    const element = document.createElement("div");
+    const root = createRoot(element);
+    root.render(<LayerMenu />);
+
+    super({ element: element, target: options.target });
+
+
+  }
+}

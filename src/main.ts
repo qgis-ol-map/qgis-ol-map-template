@@ -8,7 +8,7 @@ import { useGeographic } from "ol/proj.js";
 import { layerFromJson } from "./layers";
 import { loadEpsgs } from "./epsgUtils";
 import { getConfig } from "./configProvider";
-import { register as registerLayerMenu } from "./controls/LayerMenu";
+import { LayerMenuControl } from "./controls/layer-menu/LayerMenu";
 import { store } from "./state";
 import { layerAdded } from "./state/layerConfig";
 import { v4 as uuidv4 } from "uuid";
@@ -52,9 +52,8 @@ const initMap = () => {
     });
   }
 
-  registerLayerMenu(map);
-
   map.addControl(new PositionControl());
+  map.addControl(new LayerMenuControl());
 
   map.addControl(new ScaleLine({
     units: "metric",
