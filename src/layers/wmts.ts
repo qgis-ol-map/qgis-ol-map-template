@@ -1,14 +1,10 @@
 import TileLayer from "ol/layer/Tile";
 import WMTS, { optionsFromCapabilities } from "ol/source/WMTS.js";
 import WMTSCapabilities from "ol/format/WMTSCapabilities.js";
+import type { CommonLayerJson } from ".";
 
-export type WmtsLayerJson = {
-  type: string;
-  title?: string;
-  zIndex: number;
-  opacity?: number;
+export type WmtsLayerJson = CommonLayerJson & {
   url: string;
-  attribution?: string;
   layer: string;
 };
 
@@ -33,9 +29,9 @@ export const wmtsLayerFromJson = async (json: WmtsLayerJson) => {
   const source = new WMTS(options);
 
   return new TileLayer({
-    title: json.title ?? "Untitled WMTS layer",
     opacity: json.opacity ?? 1.0,
     zIndex: json.zIndex ?? null,
+    visible: json.visible ?? true,
     source,
   });
 };

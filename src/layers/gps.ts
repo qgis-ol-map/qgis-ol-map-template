@@ -7,12 +7,9 @@ import Fill from "ol/style/Fill.js";
 import Stroke from "ol/style/Stroke.js";
 import Style from "ol/style/Style.js";
 import Point from "ol/geom/Point.js";
+import type { CommonLayerJson } from ".";
 
-export type GpsLayerJson = {
-  type: string;
-  title?: string;
-  zIndex: number;
-  opacity?: number;
+export type GpsLayerJson = CommonLayerJson & {
 };
 
 export const gpsLayerFromJson = async (json: GpsLayerJson) => {
@@ -57,9 +54,9 @@ export const gpsLayerFromJson = async (json: GpsLayerJson) => {
   });
 
   const layer = new VectorLayer({
-    title: json.title ?? "Untitled GPS layer",
     opacity: json.opacity ?? 1.0,
     zIndex: json.zIndex ?? null,
+    visible: json.visible ?? true,
     source,
   });
 

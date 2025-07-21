@@ -5,6 +5,7 @@ export default {
             title: "Current position",
             visible: true,
             zIndex: 9990,
+            index: -1,
         }
     }
 };

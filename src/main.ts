@@ -1,15 +1,19 @@
 import "./style.css";
 
 import "ol/ol.css";
-import "ol-layerswitcher/dist/ol-layerswitcher.css";
 
 import Map from "ol/Map";
 import View from "ol/View";
 import { useGeographic } from "ol/proj.js";
 import { layerFromJson } from "./layers";
-import LayerSwitcher from "ol-layerswitcher";
 import { loadEpsgs } from "./epsgUtils";
 import { getConfig } from "./configProvider";
+import { register as registerLayerMenu } from "./controls/LayerMenu";
+import { store } from "./state";
+import { layerAdded } from "./state/layerConfig";
+import { v4 as uuidv4 } from 'uuid';
+import { layerAssigned } from "./state/mapLayers";
+
 
 const initMap = () => {
   useGeographic();
@@ -29,17 +33,23 @@ const initMap = () => {
 
   for (const layerJsonId in config.layers) {
     const layerJson = config.layers[layerJsonId];
-    layerFromJson(layerJson).then((layer) => {
+
+    const layerUid = uuidv4();
+    store.dispatch(layerAdded({
+      uid: layerUid,
+      parent: null,
+      json: layerJson,
+    }));
+
+    layerFromJson(layerJson, layerUid).then((layer) => {
       if (layer) {
         map.addLayer(layer);
+        store.dispatch(layerAssigned({uid: layerUid, layer}));
       }
     });
   }
 
-  const layerSwitcher = new LayerSwitcher({
-    groupSelectStyle: "group",
-  });
-  map.addControl(layerSwitcher);
+  registerLayerMenu(map)
 };
 
 initMap();

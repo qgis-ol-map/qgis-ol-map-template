@@ -11,6 +11,16 @@ import { wfsLayerFromJson, type WfsLayerJson } from "./wfs";
 import { gpsLayerFromJson, type GpsLayerJson } from "./gps";
 import { geoJsonLayerFromJson, type GeoJsonLayerJson } from "./geojson";
 
+export type CommonLayerJson = {
+  type: string;
+  title?: string;
+  visible?: boolean;
+  index: number;
+  zIndex: number;
+  opacity?: number;
+  attribution?: string;
+};
+
 export type LayerJson =
   | KmlLayerJson
   | GeoJsonLayerJson
@@ -21,7 +31,7 @@ export type LayerJson =
   | GroupLayerJson
   | WfsLayerJson;
 
-export const layerFromJson = async (json: any) => {
+export const layerFromJson = async (json: any, layerUid: string) => {
   if (json.type === "xyz") {
     return xyzLayerFromJson(json as XyzLayerJson);
   }
@@ -44,7 +54,7 @@ export const layerFromJson = async (json: any) => {
     return geoJsonLayerFromJson(json as GeoJsonLayerJson);
   }
   if (json.type === "group") {
-    return groupLayerFromJson(json as GroupLayerJson);
+    return groupLayerFromJson(json as GroupLayerJson, layerUid);
   }
   if (json.type === "gps") {
     return gpsLayerFromJson(json as GpsLayerJson);

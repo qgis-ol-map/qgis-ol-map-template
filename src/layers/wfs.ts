@@ -1,12 +1,9 @@
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
 import WFS from "ol/format/WFS.js";
+import type { CommonLayerJson } from ".";
 
-export type WfsLayerJson = {
-  type: string;
-  title?: string;
-  zIndex: number;
-  opacity?: number;
+export type WfsLayerJson = CommonLayerJson & {
   url: string;
   layer: string;
   version?: string;
@@ -22,9 +19,9 @@ export const wfsLayerFromJson = async (json: WfsLayerJson) => {
   });
 
   return new VectorLayer({
-    title: json.title ?? "Untitled WFS layer",
     opacity: json.opacity ?? 1.0,
     zIndex: json.zIndex ?? null,
+    visible: json.visible ?? true,
     source,
   });
 };

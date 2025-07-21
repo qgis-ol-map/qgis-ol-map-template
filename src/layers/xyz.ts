@@ -1,13 +1,9 @@
 import ImageTileSource from "ol/source/ImageTile.js";
 import TileLayer from "ol/layer/Tile";
+import type { CommonLayerJson } from ".";
 
-export type XyzLayerJson = {
-  type: string;
-  title?: string;
-  zIndex: number;
-  opacity?: number;
+export type XyzLayerJson = CommonLayerJson & {
   url: string;
-  attribution?: string;
 };
 
 export const xyzLayerFromJson = async (json: XyzLayerJson) => {
@@ -17,9 +13,9 @@ export const xyzLayerFromJson = async (json: XyzLayerJson) => {
   });
 
   return new TileLayer({
-    title: json.title ?? "Untitled XYZ layer",
     opacity: json.opacity ?? 1.0,
     zIndex: json.zIndex ?? null,
+    visible: json.visible ?? true,
     source,
   });
 };
