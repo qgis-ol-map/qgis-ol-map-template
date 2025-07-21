@@ -30,7 +30,7 @@
 }
 
 .layer-menu.open {
-  background: white;
+  background: rgb(255 255 255 / .5);
   padding: 0;
   margin: 0;
   overflow-y: auto;
