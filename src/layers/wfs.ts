@@ -1,19 +1,17 @@
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
 import WFS from "ol/format/WFS.js";
-import type { CommonLayerJson } from ".";
-import {
-  makeStyleFunction,
-  type VectorFeatureStyleJson,
-} from "./styles/vector-feature";
+import type { CommonLayerJson, CommonVectorLayerJson } from ".";
+import { makeStyleFunction } from "./styles/vector-feature";
+import { wrapSourceWithClustering } from "./clustering/cluster";
 
-export type WfsLayerJson = CommonLayerJson & {
-  url: string;
-  layer: string;
-  version?: string;
-  crs?: string;
-  style?: VectorFeatureStyleJson;
-};
+export type WfsLayerJson = CommonLayerJson &
+  CommonVectorLayerJson & {
+    url: string;
+    layer: string;
+    version?: string;
+    crs?: string;
+  };
 
 export const wfsLayerFromJson = async (json: WfsLayerJson) => {
   const source = new VectorSource({
@@ -31,7 +29,7 @@ export const wfsLayerFromJson = async (json: WfsLayerJson) => {
     opacity: json.opacity ?? 1.0,
     zIndex: json.zIndex ?? null,
     visible: json.visible ?? true,
-    source,
+    source: wrapSourceWithClustering(source, json.clustering),
     style: styleFunction,
     ...json.layerParams,
   });

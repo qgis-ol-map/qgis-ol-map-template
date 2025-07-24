@@ -6,6 +6,8 @@ import { groupLayerFromJson, type GroupLayerJson } from "./group";
 import { wfsLayerFromJson, type WfsLayerJson } from "./wfs";
 import { geoJsonLayerFromJson, type GeoJsonLayerJson } from "./geojson";
 import { wmsTilesLayerFromJson } from "./wms-tiles";
+import type { VectorFeatureStyleJson } from "./styles/vector-feature";
+import type { ClusteringConfigJson } from "./clustering/cluster";
 
 export type CommonLayerJson = {
   type: string;
@@ -17,6 +19,11 @@ export type CommonLayerJson = {
   attribution?: string;
   sourceParams?: Record<string, any>;
   layerParams?: Record<string, any>;
+};
+
+export type CommonVectorLayerJson = {
+  style?: VectorFeatureStyleJson;
+  clustering?: ClusteringConfigJson;
 };
 
 export type LayerJson =

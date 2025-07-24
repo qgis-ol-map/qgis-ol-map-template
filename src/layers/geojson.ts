@@ -1,13 +1,14 @@
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
 import GeoJSON from "ol/format/GeoJSON.js";
-import type { CommonLayerJson } from ".";
-import { makeStyleFunction, type VectorFeatureStyleJson } from "./styles/vector-feature";
+import type { CommonLayerJson, CommonVectorLayerJson } from ".";
+import { makeStyleFunction } from "./styles/vector-feature";
+import { wrapSourceWithClustering } from "./clustering/cluster";
 
-export type GeoJsonLayerJson = CommonLayerJson & {
-  url: string;
-  style?: VectorFeatureStyleJson;
-};
+export type GeoJsonLayerJson = CommonLayerJson &
+  CommonVectorLayerJson & {
+    url: string;
+  };
 
 export const geoJsonLayerFromJson = async (json: GeoJsonLayerJson) => {
   const source = new VectorSource({
@@ -23,7 +24,7 @@ export const geoJsonLayerFromJson = async (json: GeoJsonLayerJson) => {
     opacity: json.opacity ?? 1.0,
     zIndex: json.zIndex ?? null,
     visible: json.visible ?? true,
-    source,
+    source: wrapSourceWithClustering(source, json.clustering),
     style: styleFunction,
     ...json.layerParams,
   });

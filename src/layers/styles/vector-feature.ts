@@ -5,6 +5,10 @@ import Stroke from "ol/style/Stroke";
 import Text from "ol/style/Text";
 import type { FeatureLike } from "ol/Feature";
 import memoize from "memoize";
+import {
+  CLUSTER_LABEL_FEATURE_FIELD,
+  IS_CLUSTER_FEATURE_FIELD,
+} from "../clustering/cluster";
 
 export type VectorFeatureStyleJson = {
   symbol_size?: number;
@@ -45,39 +49,79 @@ const sizeAsPixels = (size?: number, unit?: string) => {
 export const makeStyleFunction = (json?: VectorFeatureStyleJson) => {
   if (!json) return undefined;
 
-  const size = sizeAsPixels(json.symbol_size ?? 5) ?? 5;
-
-  const styleFunction = memoize((feature: FeatureLike, _resolution: number) => {
-    return new Style({
-      image: new CircleStyle({
-        radius: size,
-        fill: new Fill({ color: json.symbol_fill_color }),
-        stroke: new Stroke({
-          color: json.symbol_stroke_color,
-          width: sizeAsPixels(
-            json.symbol_stroke_width,
-            json.symbol_stroke_width_unit
-          ),
-        }),
-      }),
-      text: json.label_text_field
-        ? new Text({
-            text: feature.get(json.label_text_field),
-            font: formatFont(json),
-            offsetY: -2 * size,
-            fill: new Fill({ color: json.label_text_color }),
-            stroke: json.label_outline_enabled
-              ? new Stroke({
-                  color: json.label_outline_color,
-                  width: sizeAsPixels(
-                    json.label_outline_width,
-                    json.label_outline_width_unit
-                  ),
-                })
-              : undefined,
-          })
-        : undefined,
-    });
+  const styleFunction = memoize((feature: FeatureLike, resolution: number) => {
+    if (feature.get(IS_CLUSTER_FEATURE_FIELD)) {
+      return styleForCluster(json, feature, resolution);
+    }
+    return styleForFeature(json, feature, resolution);
   });
   return styleFunction;
+};
+
+const styleForFeature = (
+  json: VectorFeatureStyleJson,
+  feature: FeatureLike,
+  _resolution: number
+) => {
+  const size = sizeAsPixels(json.symbol_size ?? 5) ?? 5;
+  return new Style({
+    image: new CircleStyle({
+      radius: size,
+      fill: new Fill({ color: json.symbol_fill_color }),
+      stroke: new Stroke({
+        color: json.symbol_stroke_color,
+        width: sizeAsPixels(
+          json.symbol_stroke_width,
+          json.symbol_stroke_width_unit
+        ),
+      }),
+    }),
+    text: json.label_text_field
+      ? new Text({
+          text: feature.get(json.label_text_field),
+          font: formatFont(json),
+          offsetY: -2 * size,
+          fill: new Fill({ color: json.label_text_color }),
+          stroke: json.label_outline_enabled
+            ? new Stroke({
+                color: json.label_outline_color,
+                width: sizeAsPixels(
+                  json.label_outline_width,
+                  json.label_outline_width_unit
+                ),
+              })
+            : undefined,
+        })
+      : undefined,
+  });
+};
+
+const styleForCluster = (
+  json: VectorFeatureStyleJson,
+  feature: FeatureLike,
+  _resolution: number
+) => {
+  const size = sizeAsPixels(json.symbol_size ?? 5) ?? 5;
+  return new Style({
+    image: new CircleStyle({
+      radius: size,
+      fill: new Fill({ color: json.symbol_fill_color }),
+      stroke: new Stroke({
+        color: json.symbol_stroke_color,
+        width: sizeAsPixels(
+          json.symbol_stroke_width,
+          json.symbol_stroke_width_unit
+        ),
+      }),
+    }),
+    text: json.label_text_field
+      ? new Text({
+          text: feature.get(CLUSTER_LABEL_FEATURE_FIELD),
+          font: formatFont(json),
+          offsetY: -size / 2,
+          textBaseline: "hanging",
+          fill: new Fill({ color: json.symbol_stroke_color }),
+        })
+      : undefined,
+  });
 };
