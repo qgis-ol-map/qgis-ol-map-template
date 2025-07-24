@@ -28,8 +28,10 @@ export const wmtsLayerFromJson = async (json: WmtsLayerJson) => {
   const capabilitiesText = await capabilitiesResponse.text();
   const parser = new WMTSCapabilities();
   const capabilities = parser.read(capabilitiesText);
+  const layer = json.layer ?? capabilities["Contents"]["Layer"][0]["Title"];
+
   const options = optionsFromCapabilities(capabilities, {
-    layer: json.layer,
+    layer: layer,
     attributions: json.attribution,
     ...json.sourceParams,
   });
