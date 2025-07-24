@@ -47,7 +47,7 @@ export const makeStyleFunction = (json?: VectorFeatureStyleJson) => {
 
   const size = sizeAsPixels(json.symbol_size ?? 5) ?? 5;
 
-  const styleFunction = memoize((feature: FeatureLike, resolution: number) => {
+  const styleFunction = memoize((feature: FeatureLike, _resolution: number) => {
     return new Style({
       image: new CircleStyle({
         radius: size,
