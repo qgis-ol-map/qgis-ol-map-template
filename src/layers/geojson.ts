@@ -8,12 +8,13 @@ import { wrapSourceWithClustering } from "./clustering/cluster";
 export type GeoJsonLayerJson = CommonLayerJson &
   CommonVectorLayerJson & {
     url: string;
+    crs?: string;
   };
 
 export const geoJsonLayerFromJson = async (json: GeoJsonLayerJson) => {
   const source = new VectorSource({
     url: json.url,
-    format: new GeoJSON(),
+    format: new GeoJSON({dataProjection: json.crs}),
     attributions: json.attribution,
     ...json.sourceParams,
   });

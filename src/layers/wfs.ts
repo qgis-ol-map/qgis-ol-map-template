@@ -10,8 +10,11 @@ export type WfsLayerJson = CommonLayerJson &
     url: string;
     layer: string;
     version?: string;
-    crs?: string;
   };
+
+// it looks like there is no support for reprojection in wfs format,
+// so we force EPSG:4326 on the remote source
+const crs = "EPSG:4326";
 
 export const wfsLayerFromJson = async (json: WfsLayerJson) => {
   const source = new VectorSource({
@@ -19,7 +22,7 @@ export const wfsLayerFromJson = async (json: WfsLayerJson) => {
     attributions: json.attribution,
     url:
       json.url +
-      `?SERVICE=WFS&REQUEST=GetFeature&TYPENAMES=${json.layer}&VERSION=${json.version}&srsname=${json.crs}`,
+      `?SERVICE=WFS&REQUEST=GetFeature&TYPENAMES=${json.layer}&VERSION=${json.version}&SRSNAME=${crs}`,
     ...json.sourceParams,
   });
 
