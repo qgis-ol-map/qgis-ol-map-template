@@ -9,7 +9,10 @@ export type GroupLayerJson = CommonLayerJson & {
   layers: Array<LayerJson>;
 };
 
-export const groupLayerFromJson = async (json: GroupLayerJson, layerUid: string) => {
+export const groupLayerFromJson = async (
+  json: GroupLayerJson,
+  layerUid: string
+) => {
   const group = new LayerGroup({
     opacity: json.opacity ?? 1.0,
     zIndex: json.zIndex ?? null,
@@ -31,7 +34,7 @@ export const groupLayerFromJson = async (json: GroupLayerJson, layerUid: string)
     const layer = await layerFromJson(layerJson, nestedLayerUid);
     if (!layer) continue;
 
-    store.dispatch(layerAssigned({uid: nestedLayerUid, layer}));
+    store.dispatch(layerAssigned({ uid: nestedLayerUid, layer }));
 
     const layers = group.getLayers();
     layers.push(layer);

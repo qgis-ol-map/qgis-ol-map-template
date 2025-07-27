@@ -36,7 +36,7 @@ const LayerItemTitle = (props: LayerItemProps) => {
 
   const defaultVisible = manualConfig
     ? manualConfig.visible
-    : layer.json.visible ?? true;
+    : (layer.json.visible ?? true);
 
   return (
     <>
@@ -115,7 +115,6 @@ const LayerMenu = () => {
   );
 };
 
-
 export class LayerMenuControl extends Control {
   constructor(opt_options?: ControlOptions) {
     const options = Object.assign({}, opt_options);
@@ -125,7 +124,5 @@ export class LayerMenuControl extends Control {
     root.render(<LayerMenu />);
 
     super({ element: element, target: options.target });
-
-
   }
 }
