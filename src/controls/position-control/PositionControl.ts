@@ -220,7 +220,10 @@ export class PositionControl extends Control {
     if (this.zoomOnNextPosition) {
       this.zoomOnNextPosition = false;
       this.getMap()?.getView().setCenter(coordinates);
-      this.getMap()?.getView().setZoom(POSITION_AUTO_ZOOM);
+      const currentZoom = this.getMap()?.getView().getZoom() ?? 0;
+      if (currentZoom < POSITION_AUTO_ZOOM) {
+        this.getMap()?.getView().setZoom(POSITION_AUTO_ZOOM);
+      }
     }
 
     this.lastPosition = coordinates;
