@@ -157,6 +157,9 @@ export class PositionControl extends Control {
       if (orientationSupported) {
         this.state = "follow";
         this.startHeading();
+        if (this.lastPosition) {
+          this.getMap()?.getView().setCenter(this.lastPosition);
+        }
       } else {
         this.state = "off";
         this.stopPosition();
