@@ -15,10 +15,11 @@ import Point from "ol/geom/Point.js";
 
 import iconOff from "./assets/current-location-off.svg?raw";
 import iconPosition from "./assets/current-location.svg?raw";
-import iconHeading from "./assets/brand-safari.svg?raw";
+import iconFollow from "./assets/location.svg?raw";
 import type { Coordinate } from "ol/coordinate";
+import Map from "ol/Map";
 
-type State = "off" | "position" | "heading";
+type State = "off" | "position" | "follow";
 
 type DeviceOrientationPermission = "granted" | "denied" | "default";
 
@@ -67,6 +68,7 @@ export class PositionControl extends Control {
   headingThrottleLock: boolean = false;
 
   boundOrientationEventListener: (e: DeviceOrientationEvent) => void;
+  boundInteractionEventListener: () => void;
 
   constructor(opt_options?: ControlOptions) {
     const options = Object.assign({}, opt_options);
@@ -119,6 +121,32 @@ export class PositionControl extends Control {
 
     this.boundOrientationEventListener =
       this.orientationEventListener.bind(this);
+
+    this.boundInteractionEventListener =
+      this.interactionEventListener.bind(this);
+  }
+
+  setMap(map: Map | null) {
+    const oldMap = this.getMap();
+    if (oldMap) {
+      oldMap
+        .getView()
+        .removeEventListener(
+          "change:center",
+          this.boundInteractionEventListener
+        );
+      oldMap
+        .getView()
+        .removeEventListener(
+          "change:rotation",
+          this.boundInteractionEventListener
+        );
+    }
+    super.setMap(map);
+    if (map) {
+      map.getView().on("change:center", this.boundInteractionEventListener);
+      map.getView().on("change:rotation", this.boundInteractionEventListener);
+    }
   }
 
   toggleState() {
@@ -127,24 +155,33 @@ export class PositionControl extends Control {
       this.startPosition();
     } else if (this.state == "position") {
       if (orientationSupported) {
-        this.state = "heading";
+        this.state = "follow";
         this.startHeading();
       } else {
         this.state = "off";
         this.stopPosition();
       }
-    } else if (this.state == "heading") {
+    } else if (this.state == "follow") {
       this.state = "off";
       this.stopHeading();
       this.stopPosition();
+      this.resetRotation();
     }
     this.updateButton();
+  }
+
+  stateStopFollow() {
+    if (this.state == "follow") {
+      this.state = "position";
+      this.stopHeading();
+      this.updateButton();
+    }
   }
 
   updateButton() {
     if (this.state == "off") this.element.innerHTML = iconOff;
     if (this.state == "position") this.element.innerHTML = iconPosition;
-    if (this.state == "heading") this.element.innerHTML = iconHeading;
+    if (this.state == "follow") this.element.innerHTML = iconFollow;
     this.element.className = "position-button " + this.state;
   }
 
@@ -168,6 +205,9 @@ export class PositionControl extends Control {
 
   stopHeading() {
     this.unregisterOrientationEventListener();
+  }
+
+  resetRotation() {
     this.getMap()?.getView().setRotation(DEFAULT_MAP_ROTATION);
   }
 
@@ -190,6 +230,10 @@ export class PositionControl extends Control {
     this.positionFeature.setGeometry(
       coordinates ? new Point(coordinates) : undefined
     );
+
+    if (coordinates && this.state == "follow") {
+      this.getMap()?.getView().setCenter(coordinates);
+    }
   }
 
   accuracyUpdate() {
@@ -269,5 +313,13 @@ export class PositionControl extends Control {
       "deviceorientation",
       this.boundOrientationEventListener
     );
+  }
+
+  interactionEventListener() {
+    if (this.getMap()?.getView().getInteracting()) {
+      if (this.state == "follow") {
+        this.stateStopFollow();
+      }
+    }
   }
 }
