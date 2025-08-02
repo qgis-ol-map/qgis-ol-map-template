@@ -22,13 +22,17 @@ const initMap = () => {
 
   const config = getConfig();
 
-  const position = [51.505, -0.09];
+  let position = [
+    config.viewport?.center.x ?? 0,
+    config.viewport?.center.y ?? 0,
+  ];
+
   const map = new Map({
     target: "map",
     controls: [],
     view: new View({
       center: position,
-      zoom: 2,
+      zoom: config.viewport?.zoom ?? 18,
     }),
   });
 
