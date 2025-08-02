@@ -16,6 +16,7 @@ import { layerAssigned } from "./state/mapLayers";
 import { PositionControl } from "./controls/position-control/PositionControl";
 import ScaleLine from "ol/control/ScaleLine.js";
 import Zoom from "ol/control/Zoom.js";
+import { NorthArrow } from "./controls/north-arrow/NorthArrow";
 
 const initMap = () => {
   useGeographic();
@@ -61,6 +62,7 @@ const initMap = () => {
   map.addControl(new Zoom());
   map.addControl(new PositionControl());
   map.addControl(new LayerMenuControl());
+  map.addControl(new NorthArrow());
 
   map.addControl(
     new ScaleLine({
