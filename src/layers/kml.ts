@@ -26,6 +26,9 @@ export const kmlLayerFromJson = async (json: KmlLayerJson) => {
     visible: json.visible ?? true,
     source: wrapSourceWithClustering(source, json.clustering),
     style: styleFunction,
+    properties: {
+      hasPopups: json.popup != undefined,
+    },
     ...json.layerParams,
   });
 };

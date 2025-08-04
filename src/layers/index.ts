@@ -8,6 +8,14 @@ import { geoJsonLayerFromJson, type GeoJsonLayerJson } from "./geojson";
 import { wmsTilesLayerFromJson } from "./wms-tiles";
 import type { VectorFeatureStyleJson } from "./styles/vector-feature";
 import type { ClusteringConfigJson } from "./clustering/cluster";
+import type Layer from "ol/layer/Layer";
+import type { FeatureLike } from "ol/Feature";
+
+export type PopupFunction = (
+  element: HTMLElement,
+  feature: FeatureLike,
+  layer: Layer
+) => (() => void) | null;
 
 export type CommonLayerJson = {
   type: string;
@@ -24,6 +32,7 @@ export type CommonLayerJson = {
 export type CommonVectorLayerJson = {
   style?: VectorFeatureStyleJson;
   clustering?: ClusteringConfigJson;
+  popup?: PopupFunction;
 };
 
 export type LayerJson =

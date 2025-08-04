@@ -34,6 +34,7 @@ export const groupLayerFromJson = async (
     const layer = await layerFromJson(layerJson, nestedLayerUid);
     if (!layer) continue;
 
+    layer.set("uid", nestedLayerUid);
     store.dispatch(layerAssigned({ uid: nestedLayerUid, layer }));
 
     const layers = group.getLayers();

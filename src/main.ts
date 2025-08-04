@@ -17,6 +17,7 @@ import { PositionControl } from "./controls/position-control/PositionControl";
 import ScaleLine from "ol/control/ScaleLine.js";
 import Zoom from "ol/control/Zoom.js";
 import { NorthArrow } from "./controls/north-arrow/NorthArrow";
+import { PopUpController } from "./controls/popup-controller/PopUpController";
 
 const initMap = () => {
   useGeographic();
@@ -53,6 +54,7 @@ const initMap = () => {
 
     layerFromJson(layerJson, layerUid).then((layer) => {
       if (layer) {
+        layer.set("uid", layerUid);
         map.addLayer(layer);
         store.dispatch(layerAssigned({ uid: layerUid, layer }));
       }
@@ -72,6 +74,8 @@ const initMap = () => {
       minWidth: 140,
     })
   );
+
+  new PopUpController().register(map);
 };
 
 initMap();

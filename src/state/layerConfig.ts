@@ -35,3 +35,12 @@ export const layersByParent = createSelector(
       .filter((layer: LayerConfig) => layer.parent == parentUid)
       .sort((a, b) => a.json.index - b.json.index)
 );
+
+export const layerByUid = createSelector(
+  [
+    (state: RootState) => state?.layerConfig ?? [],
+    (_state: RootState, uid: string | null) => uid,
+  ],
+  (layers: Array<LayerConfig>, uid: string | null) =>
+    layers.find((value) => value.uid == uid)
+);

@@ -27,6 +27,9 @@ export const geoJsonLayerFromJson = async (json: GeoJsonLayerJson) => {
     visible: json.visible ?? true,
     source: wrapSourceWithClustering(source, json.clustering),
     style: styleFunction,
+    properties: {
+      hasPopups: json.popup != undefined,
+    },
     ...json.layerParams,
   });
 };
