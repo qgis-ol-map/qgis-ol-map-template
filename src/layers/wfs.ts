@@ -4,6 +4,7 @@ import WFS from "ol/format/WFS.js";
 import type { CommonLayerJson, CommonVectorLayerJson } from ".";
 import { makeStyleFunction } from "./styles/vector-feature";
 import { wrapSourceWithClustering } from "./clustering/cluster";
+import { makePopupProps } from "../controls/popup-controller/PopUpController";
 
 export type WfsLayerJson = CommonLayerJson &
   CommonVectorLayerJson & {
@@ -35,7 +36,7 @@ export const wfsLayerFromJson = async (json: WfsLayerJson) => {
     source: wrapSourceWithClustering(source, json.clustering),
     style: styleFunction,
     properties: {
-      hasPopups: json.popup != undefined,
+      ...makePopupProps(json),
     },
     ...json.layerParams,
   });

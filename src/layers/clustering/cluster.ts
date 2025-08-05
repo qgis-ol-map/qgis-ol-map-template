@@ -2,6 +2,7 @@ import { Cluster } from "ol/source";
 import type { Geometry } from "ol/geom";
 import type { Feature } from "ol";
 import type VectorSource from "ol/source/Vector";
+import type { PopupFunction } from "..";
 
 export const CLUSTER_LABEL_FEATURE_FIELD = "__ClusterLabel";
 export const IS_CLUSTER_FEATURE_FIELD = "__IsCluster";
@@ -10,6 +11,7 @@ export type ClusteringConfigJson = {
   enabled?: boolean;
   distance?: number;
   minDistance?: number;
+  popup?: PopupFunction;
 };
 
 export class ClusterWithOrphans extends Cluster {

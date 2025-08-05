@@ -5,6 +5,17 @@ import Map from "ol/Map";
 import { layerByUid } from "../../state/layerConfig";
 import { store } from "../../state";
 import type { CommonVectorLayerJson } from "../../layers";
+import { IS_CLUSTER_FEATURE_FIELD } from "../../layers/clustering/cluster";
+
+const HAS_POPUP_FIELD = "__hasPopup";
+const HAS_CLUSTER_POPUP_FIELD = "__hasClusterPopup";
+
+export const makePopupProps = (json: CommonVectorLayerJson) => {
+  return {
+    __hasPopup: json.popup != undefined,
+    __hasClusterPopup: json.clustering?.popup != undefined,
+  };
+};
 
 export class PopUpController {
   register(map: Map) {
@@ -33,7 +44,11 @@ export class PopUpController {
       const featureAndLayer = map.forEachFeatureAtPixel(
         evt.pixel,
         function (feature, layer) {
-          if (layer.get("hasPopups")) {
+          if (feature.get(IS_CLUSTER_FEATURE_FIELD)) {
+            if (layer.get(HAS_CLUSTER_POPUP_FIELD)) {
+              return { feature, layer };
+            }
+          } else if (layer.get(HAS_POPUP_FIELD)) {
             return { feature, layer };
           }
         }
@@ -52,7 +67,10 @@ export class PopUpController {
       const state = store.getState();
       const layerConfig = layerByUid(state, layer.get("uid"));
 
-      const popupFn = (layerConfig?.json as CommonVectorLayerJson).popup;
+      const popupFn = feature.get(IS_CLUSTER_FEATURE_FIELD)
+        ? (layerConfig?.json as CommonVectorLayerJson).clustering?.popup
+        : (layerConfig?.json as CommonVectorLayerJson).popup;
+
       if (!popupFn) return;
 
       disposeFn = popupFn(element, feature, layer);
@@ -65,8 +83,12 @@ export class PopUpController {
       const hit = map.hasFeatureAtPixel(e.pixel);
       const hitFeatureWithPopup =
         hit &&
-        map.forEachFeatureAtPixel(e.pixel, function (_feature, layer) {
-          if (layer.get("hasPopups")) {
+        map.forEachFeatureAtPixel(e.pixel, function (feature, layer) {
+          if (feature.get(IS_CLUSTER_FEATURE_FIELD)) {
+            if (layer.get(HAS_CLUSTER_POPUP_FIELD)) {
+              return true;
+            }
+          } else if (layer.get(HAS_POPUP_FIELD)) {
             return true;
           }
         });
