@@ -28,6 +28,13 @@ export type VectorFeatureStyleJson = {
   label_outline_color?: string;
   label_outline_width?: number;
   label_outline_width_unit?: string;
+  polygon_fill_color?: string;
+  polygon_stroke_color?: string;
+  polygon_stroke_width?: number;
+  polygon_stroke_width_unit?: string;
+  line_stroke_color?: string;
+  line_stroke_width?: number;
+  line_stroke_width_unit?: string;
 };
 
 const formatFont = (json: VectorFeatureStyleJson) => {
@@ -93,6 +100,16 @@ const styleForFeature = (
             : undefined,
         })
       : undefined,
+    fill: new Fill({
+      color: json.polygon_fill_color,
+    }),
+    stroke: new Stroke({
+      color: json.line_stroke_color || json.polygon_stroke_color,
+      width: sizeAsPixels(
+        json.line_stroke_width || json.polygon_stroke_width,
+        json.line_stroke_width_unit || json.polygon_stroke_width_unit
+      ),
+    }),
   });
 };
 
