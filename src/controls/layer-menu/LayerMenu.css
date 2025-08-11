@@ -71,6 +71,7 @@
 
 .layer-menu li {
   margin-top: 16px;
+  white-space: nowrap;
 }
 
 .layer-menu li svg {
