@@ -70,3 +70,11 @@
 .layer-menu li {
   margin-top: 16px;
 }
+
+.layer-menu li svg {
+  color: gray;
+  width: 20x;
+  height: 20px;
+  position: relative;
+  top: -2px;
+}
