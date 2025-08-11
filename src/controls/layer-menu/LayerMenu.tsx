@@ -12,6 +12,9 @@ import {
   layerConfiguredVisibility,
   manualConfigByLayer,
 } from "../../state/manualConfig";
+import type { CommonVectorLayerJson } from "../../layers";
+import GroupIcon from "./stack-back.svg";
+import RasterIcon from "./layers-selected.svg";
 
 type LayerItemProps = {
   layer: LayerConfig;
@@ -38,6 +41,39 @@ const LayerItemTitle = (props: LayerItemProps) => {
     ? manualConfig.visible
     : (layer.json.visible ?? true);
 
+  const groupIcon = layer.json.type == "group";
+  const vectorStyle = (layer.json as CommonVectorLayerJson).style;
+  const rasterIcon = !groupIcon && !vectorStyle;
+  const vectorStylePreview: Record<string, string> = {
+    display: "inline-block",
+    width: "16px",
+    height: "16px",
+    background: "red",
+    marginLeft: "5px",
+    marginRight: "5px",
+  };
+
+  if (vectorStyle) {
+    vectorStylePreview["border"] = "2px solid rgba(0 0 0 / 0)";
+
+    if (vectorStyle.symbol_fill_color) {
+      vectorStylePreview["borderRadius"] = "8px";
+    } else if (vectorStyle.polygon_fill_color) {
+      vectorStylePreview["borderRadius"] = "1px 10px 2px 8px";
+    } else if (vectorStyle.line_stroke_color) {
+      vectorStylePreview["borderRadius"] = "0px 0px 0px 6px";
+      vectorStylePreview["borderWidth"] = "0px 0px 2px 2px";
+    }
+
+    vectorStylePreview["backgroundColor"] =
+      vectorStyle.symbol_fill_color || vectorStyle.polygon_fill_color || "";
+    vectorStylePreview["borderColor"] =
+      vectorStyle.symbol_stroke_color ||
+      vectorStyle.polygon_stroke_color ||
+      vectorStyle.line_stroke_color ||
+      "";
+  }
+
   return (
     <>
       <input
@@ -46,6 +82,9 @@ const LayerItemTitle = (props: LayerItemProps) => {
         defaultChecked={defaultVisible}
         onChange={visibilityChanged}
       />
+      {vectorStyle && <div style={vectorStylePreview}></div>}
+      {groupIcon && <GroupIcon />}
+      {rasterIcon && <RasterIcon />}
       <label htmlFor={"layer-visible-" + layer.uid}>{layer.json.title}</label>
     </>
   );

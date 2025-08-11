@@ -16,8 +16,8 @@ export const store = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
-        ignoredActionPaths: ["payload.layer"],
-        ignoredPaths: ["mapLayers"],
+        ignoredActionPaths: ["payload.layer", "payload.json"],
+        ignoredPaths: ["mapLayers", "layerConfig"],
       },
     }),
 });
