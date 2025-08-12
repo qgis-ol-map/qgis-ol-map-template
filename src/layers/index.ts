@@ -10,6 +10,7 @@ import type { VectorFeatureStyleJson } from "./styles/vector-feature";
 import type { ClusteringConfigJson } from "./clustering/cluster";
 import type Layer from "ol/layer/Layer";
 import type { FeatureLike } from "ol/Feature";
+import { geoTiffLayerFromJson, type GeoTiffLayerJson } from "./geotiff";
 
 export type PopupFunction = (
   element: HTMLElement,
@@ -42,7 +43,8 @@ export type LayerJson =
   | WmsLayerJson
   | WmtsLayerJson
   | GroupLayerJson
-  | WfsLayerJson;
+  | WfsLayerJson
+  | GeoTiffLayerJson;
 
 export const layerFromJson = async (json: any, layerUid: string) => {
   if (json.type === "xyz") {
@@ -65,6 +67,9 @@ export const layerFromJson = async (json: any, layerUid: string) => {
   }
   if (json.type === "geojson") {
     return geoJsonLayerFromJson(json as GeoJsonLayerJson);
+  }
+  if (json.type === "geotiff") {
+    return geoTiffLayerFromJson(json as GeoTiffLayerJson);
   }
   if (json.type === "group") {
     return groupLayerFromJson(json as GroupLayerJson, layerUid);
