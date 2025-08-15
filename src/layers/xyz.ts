@@ -4,12 +4,16 @@ import type { CommonLayerJson } from ".";
 
 export type XyzLayerJson = CommonLayerJson & {
   url: string;
+  minZoom?: number | null;
+  maxZoom?: number | null;
 };
 
 export const xyzLayerFromJson = async (json: XyzLayerJson) => {
   const source = new ImageTileSource({
     url: json.url,
     attributions: json.attribution,
+    minZoom: json.minZoom || undefined,
+    maxZoom: json.maxZoom || undefined,
     ...json.sourceParams,
   });
 
