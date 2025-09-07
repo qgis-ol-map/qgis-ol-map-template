@@ -19,6 +19,7 @@ export type VectorFeatureStyleJson = {
   symbol_stroke_width_unit?: string;
   label_text_field?: string;
   label_text_color?: string;
+  label_text_rotate?: boolean;
   label_font_family?: string;
   label_font_size?: number;
   label_font_size_unit?: string;
@@ -89,6 +90,7 @@ const styleForFeature = (
           font: formatFont(json),
           offsetY: -2 * size,
           fill: new Fill({ color: json.label_text_color }),
+          rotateWithView: json.label_text_rotate ?? true,
           stroke: json.label_outline_enabled
             ? new Stroke({
                 color: json.label_outline_color,
