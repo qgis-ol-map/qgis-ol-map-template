@@ -11,6 +11,7 @@ import type { ClusteringConfigJson } from "./clustering/cluster";
 import type Layer from "ol/layer/Layer";
 import type { FeatureLike } from "ol/Feature";
 import { geoTiffLayerFromJson, type GeoTiffLayerJson } from "./geotiff";
+import { gpxLayerFromJson, type GpxLayerJson } from "./gpx";
 
 export type PopupFunction = (
   element: HTMLElement,
@@ -44,7 +45,8 @@ export type LayerJson =
   | WmtsLayerJson
   | GroupLayerJson
   | WfsLayerJson
-  | GeoTiffLayerJson;
+  | GeoTiffLayerJson
+  | GpxLayerJson;
 
 export const layerFromJson = async (json: any, layerUid: string) => {
   if (json.type === "xyz") {
@@ -70,6 +72,9 @@ export const layerFromJson = async (json: any, layerUid: string) => {
   }
   if (json.type === "geotiff") {
     return geoTiffLayerFromJson(json as GeoTiffLayerJson);
+  }
+  if (json.type === "gpx") {
+    return gpxLayerFromJson(json as GpxLayerJson);
   }
   if (json.type === "group") {
     return groupLayerFromJson(json as GroupLayerJson, layerUid);

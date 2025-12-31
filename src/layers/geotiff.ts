@@ -1,11 +1,11 @@
 import type { CommonLayerJson } from ".";
-import GeoTIFF from 'ol/source/GeoTIFF.js';
-import TileLayer from 'ol/layer/WebGLTile.js';
+import GeoTIFF from "ol/source/GeoTIFF.js";
+import TileLayer from "ol/layer/WebGLTile.js";
 
 export type GeoTiffLayerJson = CommonLayerJson & {
-    url: string;
-    crs?: string;
-  };
+  url: string;
+  crs?: string;
+};
 
 export const geoTiffLayerFromJson = async (json: GeoTiffLayerJson) => {
   const source = new GeoTIFF({
@@ -13,7 +13,7 @@ export const geoTiffLayerFromJson = async (json: GeoTiffLayerJson) => {
       {
         url: json.url,
         ...json.sourceParams,
-      }
+      },
     ],
   });
 
