@@ -6,6 +6,7 @@ import { v4 as uuidv4 } from "uuid";
 import { layerAssigned } from "../state/mapLayers";
 
 export type GroupLayerJson = CommonLayerJson & {
+  collapsed?: boolean;
   layers: Array<LayerJson>;
 };
 
