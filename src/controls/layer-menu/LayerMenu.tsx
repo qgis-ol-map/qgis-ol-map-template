@@ -10,18 +10,22 @@ import { useState, type ChangeEvent } from "react";
 import { layerByUid } from "../../state/mapLayers";
 import {
   layerConfiguredVisibility,
+  layerConfiguredCollapsed,
   manualConfigByLayer,
 } from "../../state/manualConfig";
 import type { CommonVectorLayerJson } from "../../layers";
 import GroupIcon from "./stack-back.svg";
 import RasterIcon from "./layers-selected.svg";
+import CollapseIcon from "./collapse.svg";
+import type { GroupLayerJson } from "../../layers/group";
 
 type LayerItemProps = {
   layer: LayerConfig;
+  parentVisible: boolean;
 };
 
 const LayerItemTitle = (props: LayerItemProps) => {
-  const { layer } = props;
+  const { layer, parentVisible } = props;
 
   const dispatch = useDispatch();
 
@@ -37,9 +41,8 @@ const LayerItemTitle = (props: LayerItemProps) => {
     mapLayer.setVisible(visible);
   };
 
-  const defaultVisible = manualConfig
-    ? manualConfig.visible
-    : (layer.json.visible ?? true);
+  const visible: boolean =
+    (manualConfig ? manualConfig.visible : layer.json.visible) ?? true;
 
   const groupIcon = layer.json.type == "group";
   const vectorStyle = (layer.json as CommonVectorLayerJson).style;
@@ -79,26 +82,50 @@ const LayerItemTitle = (props: LayerItemProps) => {
       <input
         id={"layer-visible-" + layer.uid}
         type="checkbox"
-        defaultChecked={defaultVisible}
+        defaultChecked={visible}
+        className={!parentVisible ? "disabled" : ""}
         onChange={visibilityChanged}
       />
       {vectorStyle && <div style={vectorStylePreview}></div>}
-      {groupIcon && <GroupIcon />}
-      {rasterIcon && <RasterIcon />}
+      <span className="icon">
+        {groupIcon && <GroupIcon />}
+        {rasterIcon && <RasterIcon />}
+      </span>
       <label htmlFor={"layer-visible-" + layer.uid}>{layer.json.title}</label>
     </>
   );
 };
 
 const LayerGroupItem = (props: LayerItemProps) => {
-  const { layer } = props;
+  const { layer, parentVisible } = props;
+  const dispatch = useDispatch();
   const layers = useSelector((state) => layersByParent(state, layer.uid));
+  const manualConfig = useSelector((state) =>
+    manualConfigByLayer(state, layer.uid)
+  );
+
+  const collapsed = manualConfig
+    ? manualConfig.collapsed
+    : ((layer.json as GroupLayerJson).collapsed ?? true);
+
+  const visible: boolean =
+    (manualConfig ? manualConfig.visible : layer.json.visible) ?? true;
+
+  const collapseToggleClicked = () => {
+    dispatch(
+      layerConfiguredCollapsed({ uid: layer.uid, collapsed: !collapsed })
+    );
+  };
+
   return (
-    <li>
-      <LayerItemTitle layer={layer} />
+    <li className={collapsed ? "layer-group collapsed" : "layer-group"}>
+      <div onClick={collapseToggleClicked} className="collapse-btn">
+        <CollapseIcon />
+      </div>
+      <LayerItemTitle layer={layer} parentVisible={parentVisible} />
       <ul>
         {layers.map((layer: LayerConfig) => (
-          <ListItem key={layer.uid} layer={layer} />
+          <ListItem key={layer.uid} layer={layer} parentVisible={visible} />
         ))}
       </ul>
     </li>
@@ -106,19 +133,27 @@ const LayerGroupItem = (props: LayerItemProps) => {
 };
 
 const LayerItem = (props: LayerItemProps) => {
-  const { layer } = props;
+  const { layer, parentVisible } = props;
   return (
     <li>
-      <LayerItemTitle layer={layer} />
+      <LayerItemTitle layer={layer} parentVisible={parentVisible} />
     </li>
   );
 };
 
 const ListItem = (props: LayerItemProps) => {
-  const { layer } = props;
+  const { layer, parentVisible } = props;
   if (layer.json.type == "group")
-    return <LayerGroupItem key={layer.uid} layer={layer} />;
-  return <LayerItem key={layer.uid} layer={layer} />;
+    return (
+      <LayerGroupItem
+        key={layer.uid}
+        layer={layer}
+        parentVisible={parentVisible}
+      />
+    );
+  return (
+    <LayerItem key={layer.uid} layer={layer} parentVisible={parentVisible} />
+  );
 };
 
 const LayerList = () => {
@@ -126,7 +161,7 @@ const LayerList = () => {
   return (
     <ul>
       {layers.map((layer: LayerConfig) => (
-        <ListItem key={layer.uid} layer={layer} />
+        <ListItem key={layer.uid} layer={layer} parentVisible={true} />
       ))}
     </ul>
   );
