@@ -41,8 +41,7 @@ const LayerItemTitle = (props: LayerItemProps) => {
     mapLayer.setVisible(visible);
   };
 
-  const visible: boolean =
-    (manualConfig ? manualConfig.visible : layer.json.visible) ?? true;
+  const visible: boolean = manualConfig?.visible ?? layer.json.visible ?? true;
 
   const groupIcon = layer.json.type == "group";
   const vectorStyle = (layer.json as CommonVectorLayerJson).style;
@@ -104,12 +103,12 @@ const LayerGroupItem = (props: LayerItemProps) => {
     manualConfigByLayer(state, layer.uid)
   );
 
-  const collapsed = manualConfig
-    ? manualConfig.collapsed
-    : ((layer.json as GroupLayerJson).collapsed ?? true);
+  const collapsed: boolean =
+    manualConfig?.collapsed ??
+    (layer.json as GroupLayerJson).collapsed ??
+    false;
 
-  const visible: boolean =
-    (manualConfig ? manualConfig.visible : layer.json.visible) ?? true;
+  const visible: boolean = manualConfig?.visible ?? layer.json.visible ?? true;
 
   const collapseToggleClicked = () => {
     dispatch(
