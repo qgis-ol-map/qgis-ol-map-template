@@ -69,12 +69,62 @@
   width: calc(100vw - 48px);
 }
 
+.layer-menu li.layer-group {
+  list-style: none;
+  margin-left: -16px;
+  padding-left: 0px;
+}
+
+.layer-menu li.layer-group .collapse-btn {
+  width: 16px;
+  height: 16px;
+  display: inline-block;
+  transform: rotate(90deg);
+  transform-origin: center center;
+  position: relative;
+  top: 3px;
+  margin-right: 5px;
+  padding-left: 0;
+}
+
+.layer-menu li.layer-group.collapsed .collapse-btn {
+  transform: rotate(0deg);
+}
+
+.layer-menu li.layer-group .collapse-btn svg {
+  position: relative;
+  top: -5px;
+  left: 2px;
+}
+
+.layer-menu li.layer-group.collapsed ul {
+  display: none;
+}
+
+.layer-menu li.layer-group input[type="checkbox"] {
+  position: relative;
+  top: 1px;
+}
+
+.layer-menu li.layer-group input[type="checkbox"].disabled {
+  filter: grayscale() opacity(0.5);
+}
+
+@supports (font: -apple-system-body) {
+  /* safari only */
+  .layer-menu li.layer-group input[type="checkbox"] {
+    top: -2px;
+  }
+}
+
 .layer-menu li {
   margin-top: 16px;
   white-space: nowrap;
+  padding-left: 1px;
+  margin-left: 4px;
 }
 
-.layer-menu li svg {
+.layer-menu li .icon svg {
   color: gray;
   width: 20x;
   height: 20px;

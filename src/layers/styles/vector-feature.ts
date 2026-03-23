@@ -48,10 +48,14 @@ const formatFont = (json: VectorFeatureStyleJson) => {
 
 const sizeAsPixels = (size?: number, unit?: string) => {
   if (size == undefined) return undefined;
+
+  const sizeFixFactor = 1.5;
   let multiplier = 1.0;
-  if (unit == "mm") multiplier = 3.75;
-  if (unit == "pt") multiplier = 1.333;
-  return size * multiplier * window.devicePixelRatio;
+
+  if (unit === "mm") multiplier = 96 / 25.4; // 96 dpi / 25.4 mm ≈ 3.7795
+  if (unit === "pt") multiplier = 96 / 72; // 96 dpi / 92 pt = 1.3333
+
+  return size * multiplier * sizeFixFactor;
 };
 
 export const makeStyleFunction = (json?: VectorFeatureStyleJson) => {
