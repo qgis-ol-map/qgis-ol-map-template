@@ -27,6 +27,7 @@ A web-based mapping application template built with OpenLayers and TypeScript, d
 - **EPSG Support** - Custom coordinate reference system support
 - **Mobile Responsive** - Optimized for mobile devices
 - **Bootstrap UI** - Clean, responsive user interface
+- **Progressive Web App** - Installable production build with GeoJSON precache and runtime tile caching
 
 ## Technology Stack
 
@@ -70,9 +71,9 @@ npm run format
 The application uses a configuration system located in the `config/` directory:
 
 - `config/config.ts` - Main configuration file (populated by QGIS plugin)
-- `config/configOverride.ts` - Override configuration for customization
+- `config/configOverride.ts` - Override configuration for customization (preserved on regenerate)
 
-Configure your layers, EPSG codes, and viewport settings in these files.
+Configure your layers, EPSG codes, and viewport settings in these files. Optional `pwa` branding (`name`, `shortName`, `description`, `themeColor`, `backgroundColor`, `icons`) and per-layer `pwaCache` (`enabled`, `maxAgeSeconds`, `maxEntries`, `maxZoom`) belong in `configOverride.ts` so they survive QGIS regeneration.
 
 ## Project Structure
 
@@ -84,6 +85,8 @@ src/
 ├── utils/             # Utility functions
 ├── main.ts           # Application entry point
 └── style.css         # Global styles
+pwa/
+└── runtimeCachingFromConfig.ts  # Workbox runtime cache rules from layer config
 ```
 
 ## Usage with QGIS Plugin

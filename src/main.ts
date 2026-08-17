@@ -1,3 +1,5 @@
+import { registerSW } from "virtual:pwa-register";
+
 import "./style.css";
 
 import "ol/ol.css";
@@ -78,4 +80,5 @@ const initMap = () => {
   new PopUpController().register(map);
 };
 
+registerSW({ immediate: true });
 initMap();

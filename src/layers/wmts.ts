@@ -1,12 +1,12 @@
 import TileLayer from "ol/layer/Tile";
 import WMTS, { optionsFromCapabilities } from "ol/source/WMTS.js";
 import WMTSCapabilities from "ol/format/WMTSCapabilities.js";
-import type { CommonLayerJson } from ".";
+import type { CommonLayerJson, CommonPwaCacheLayerJson } from ".";
 import fetchRetry from "fetch-retry";
 
 const fetchWithRetry = fetchRetry(fetch);
 
-export type WmtsLayerJson = CommonLayerJson & {
+export type WmtsLayerJson = CommonLayerJson & CommonPwaCacheLayerJson & {
   url: string;
   layer: string;
   init_reties?: number;

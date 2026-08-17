@@ -11,10 +11,27 @@ export type Viewport = {
   zoom: number;
 };
 
-type Config = {
+export type PwaIconConfig = {
+  src: string;
+  sizes: string;
+  type: string;
+  purpose?: string;
+};
+
+export type PwaConfig = {
+  name?: string;
+  shortName?: string;
+  description?: string;
+  themeColor?: string;
+  backgroundColor?: string;
+  icons?: PwaIconConfig[];
+};
+
+export type Config = {
   viewport?: Viewport;
   epsgs: Record<string, string>;
   layers: Record<string, LayerJson>;
+  pwa?: PwaConfig;
 };
 
 export const getConfig = (): Config => {
