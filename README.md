@@ -73,7 +73,7 @@ The application uses a configuration system located in the `config/` directory:
 - `config/config.ts` - Main configuration file (populated by QGIS plugin)
 - `config/configOverride.ts` - Override configuration for customization (preserved on regenerate)
 
-Configure your layers, EPSG codes, and viewport settings in these files. Optional `pwa` branding (`name`, `shortName`, `description`, `themeColor`, `backgroundColor`, `icons`) and per-layer `pwaCache` (`enabled`, `maxAgeSeconds`, `maxEntries`, `maxZoom`) belong in `configOverride.ts` so they survive QGIS regeneration.
+Configure your layers, EPSG codes, and viewport settings in these files. Optional `pwa` settings (`enabled` defaults to true; `name`, `shortName`, `description`, `themeColor`, `backgroundColor`, `icons`) and per-layer `pwaCache` (`enabled`, `maxAgeSeconds`, `maxEntries`, `maxZoom`) belong in `configOverride.ts` so they survive QGIS regeneration. Set `pwa.enabled` to `false` to skip the service worker and web manifest.
 
 ## Project Structure
 

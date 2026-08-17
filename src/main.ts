@@ -80,5 +80,7 @@ const initMap = () => {
   new PopUpController().register(map);
 };
 
-registerSW({ immediate: true });
+if (getConfig().pwa?.enabled !== false) {
+  registerSW({ immediate: true });
+}
 initMap();

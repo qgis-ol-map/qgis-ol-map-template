@@ -19,6 +19,7 @@ export type PwaIconConfig = {
 };
 
 export type PwaConfig = {
+  enabled?: boolean;
   name?: string;
   shortName?: string;
   description?: string;

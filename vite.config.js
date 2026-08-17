@@ -74,6 +74,7 @@ export default defineConfig({
       },
     },
     VitePWA({
+      disable: pwa.enabled === false,
       registerType: 'autoUpdate',
       includeManifestIcons: false,
       manifest: {

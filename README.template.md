@@ -27,7 +27,7 @@ Built files will be placed in `dist/` directory. Deploy these files to any stati
 
 The production build is an installable PWA. The service worker precaches the app shell and GeoJSON files under `public/data`. Each `xyz`, `wms-tiles`, and `wmts` layer with an `http(s)` URL gets a runtime cache rule. Optional `pwaCache` on those layers can set `enabled` (default true), `maxAgeSeconds` (default 30 days), `maxEntries`, and `maxZoom`. Tiles are stored after you pan or zoom — only tiles you have already viewed are available offline.
 
-PWA branding (`name`, `shortName`, `description`, `themeColor`, `backgroundColor`, `icons`) and per-layer `pwaCache` belong in `config/configOverride.ts` so they survive regeneration from QGIS.
+PWA branding (`enabled` defaults to true; set `enabled: false` to skip the service worker and web manifest) plus `name`, `shortName`, `description`, `themeColor`, `backgroundColor`, `icons`, and per-layer `pwaCache` belong in `config/configOverride.ts` so they survive regeneration from QGIS.
 
 Service workers are not registered in `npm run dev`. To test the PWA locally:
 
