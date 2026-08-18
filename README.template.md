@@ -23,6 +23,24 @@ npm run build
 
 Built files will be placed in `dist/` directory. Deploy these files to any static web server.
 
+### Progressive Web App
+
+The production build is an installable PWA. The service worker precaches the app shell and GeoJSON files under `public/data`. Each `xyz`, `wms-tiles`, and `wmts` layer with an `http(s)` URL gets a runtime cache rule. Optional `pwaCache` on those layers can set `enabled` (default true), `maxAgeSeconds` (default 30 days), `maxEntries`, and `maxZoom`. Tiles are stored after you pan or zoom — only tiles you have already viewed are available offline.
+
+PWA branding (`enabled` defaults to true; set `enabled: false` to skip the service worker and web manifest) plus `name`, `shortName`, `description`, `themeColor`, `backgroundColor`, `icons`, and per-layer `pwaCache` belong in `config/configOverride.ts` so they survive regeneration from QGIS.
+
+Service workers are not registered in `npm run dev`. To test the PWA locally:
+
+```bash
+npm run build && npm run preview
+```
+
+Open the preview URL, then in DevTools → Application confirm:
+
+- A service worker is installed
+- `data/*.geojson` entries appear in the precache
+- Tile hosts fill a runtime cache after you pan or zoom the map
+
 ## Configuration
 
 Your map configuration is located in the `config/` directory:
@@ -33,8 +51,8 @@ Your map configuration is located in the `config/` directory:
 
 - **`config/configOverride.ts`** - Your custom configuration overrides
   - Add custom settings here that won't be lost when regenerating
-  - Merges with the main config at runtime
-  - Use this for custom viewport adjustments, additional layers, or UI tweaks
+  - Merges with the main config at runtime and at production build time
+  - Use this for custom viewport adjustments, additional layers, UI tweaks, PWA branding, and `pwaCache`
 
 ## Maintenance
 

@@ -5,7 +5,7 @@ import { wmtsLayerFromJson, type WmtsLayerJson } from "./wmts";
 import { groupLayerFromJson, type GroupLayerJson } from "./group";
 import { wfsLayerFromJson, type WfsLayerJson } from "./wfs";
 import { geoJsonLayerFromJson, type GeoJsonLayerJson } from "./geojson";
-import { wmsTilesLayerFromJson } from "./wms-tiles";
+import { wmsTilesLayerFromJson, type WmsTilesLayerJson } from "./wms-tiles";
 import type { VectorFeatureStyleJson } from "./styles/vector-feature";
 import type { ClusteringConfigJson } from "./clustering/cluster";
 import type Layer from "ol/layer/Layer";
@@ -31,10 +31,21 @@ export type CommonLayerJson = {
   layerParams?: Record<string, any>;
 };
 
+export type PwaCacheConfigJson = {
+  enabled?: boolean;
+  maxAgeSeconds?: number;
+  maxEntries?: number;
+  maxZoom?: number;
+};
+
 export type CommonVectorLayerJson = {
   style?: VectorFeatureStyleJson;
   clustering?: ClusteringConfigJson;
   popup?: PopupFunction;
+};
+
+export type CommonPwaCacheLayerJson = {
+  pwaCache?: PwaCacheConfigJson;
 };
 
 export type LayerJson =
@@ -42,6 +53,7 @@ export type LayerJson =
   | GeoJsonLayerJson
   | XyzLayerJson
   | WmsLayerJson
+  | WmsTilesLayerJson
   | WmtsLayerJson
   | GroupLayerJson
   | WfsLayerJson
@@ -56,7 +68,7 @@ export const layerFromJson = async (json: any, layerUid: string) => {
     return wmsLayerFromJson(json as WmsLayerJson);
   }
   if (json.type === "wms-tiles") {
-    return wmsTilesLayerFromJson(json as WmsLayerJson);
+    return wmsTilesLayerFromJson(json as WmsTilesLayerJson);
   }
   if (json.type === "wmts") {
     return wmtsLayerFromJson(json as WmtsLayerJson);

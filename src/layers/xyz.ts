@@ -1,8 +1,8 @@
 import ImageTileSource from "ol/source/ImageTile.js";
 import TileLayer from "ol/layer/Tile";
-import type { CommonLayerJson } from ".";
+import type { CommonLayerJson, CommonPwaCacheLayerJson } from ".";
 
-export type XyzLayerJson = CommonLayerJson & {
+export type XyzLayerJson = CommonLayerJson & CommonPwaCacheLayerJson & {
   url: string;
   minZoom?: number | null;
   maxZoom?: number | null;

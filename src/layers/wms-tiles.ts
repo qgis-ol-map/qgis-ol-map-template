@@ -1,8 +1,11 @@
 import TileLayer from "ol/layer/Tile";
 import { TileWMS } from "ol/source";
 import type { WmsLayerJson } from "./wms";
+import type { CommonPwaCacheLayerJson } from ".";
 
-export const wmsTilesLayerFromJson = async (json: WmsLayerJson) => {
+export type WmsTilesLayerJson = WmsLayerJson & CommonPwaCacheLayerJson;
+
+export const wmsTilesLayerFromJson = async (json: WmsTilesLayerJson) => {
   const source = new TileWMS({
     url: json.url,
     attributions: json.attribution,
