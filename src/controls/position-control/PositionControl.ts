@@ -103,8 +103,7 @@ export class PositionControl extends Control {
       })
     );
 
-    geolocation.on("change:accuracyGeometry", () => this.accuracyUpdate());
-    geolocation.on("change:position", () => this.positionUpdate());
+    geolocation.on("change:accuracyGeometry", () => this.locationUpdate());
 
     const source = new VectorSource({
       features: [accuracyFeature, positionFeature],
@@ -214,11 +213,12 @@ export class PositionControl extends Control {
     this.getMap()?.getView().setRotation(DEFAULT_MAP_ROTATION);
   }
 
-  positionUpdate() {
+  locationUpdate() {
     const coordinates = this.geolocation.getPosition();
-
     if (this.lastPosition == coordinates) return;
     if (this.positionThrottleLock) return;
+
+    const geometry = this.geolocation.getAccuracyGeometry();
 
     if (this.zoomOnNextPosition) {
       this.zoomOnNextPosition = false;
@@ -236,15 +236,11 @@ export class PositionControl extends Control {
     this.positionFeature.setGeometry(
       coordinates ? new Point(coordinates) : undefined
     );
+    this.accuracyFeature.setGeometry(geometry ?? undefined);
 
     if (coordinates && this.state == "follow") {
       this.getMap()?.getView().setCenter(coordinates);
     }
-  }
-
-  accuracyUpdate() {
-    const geometry = this.geolocation.getAccuracyGeometry();
-    this.accuracyFeature.setGeometry(geometry ?? undefined);
   }
 
   orientationUpdate(orientation: OrientationState | null) {
